@@ -123,5 +123,11 @@ flights_airports <- flights%>%
 
 
 ```
+#agregando inciso 2.7 
 
+```{r}
 
+ggplot(flights_airports, aes(lon,lat))+
+  geom_point()
+
+```
