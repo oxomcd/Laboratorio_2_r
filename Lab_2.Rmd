@@ -1,0 +1,127 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+#LAboratorio 2
+#Carlos Daniel Oxom Coy
+#Importando NYCFlights13
+
+```{r}
+library(nycflights13) 
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+```
+#Visualizando datasets
+
+```{r}
+view(flights)
+view(airports)
+view(planes)
+view(airlines)
+view(weather)
+```
+
+#inner join
+
+```{r}
+flights
+airports
+
+#inciso 1
+
+inner_join(flights, planes, by= c("tailnum"))
+
+#inciso 2
+
+inner_join(flights, airlines, by = c("carrier"))
+
+#inciso 3
+  
+flights %>%
+ inner_join(airports, by = c("origin" = "faa") )%>%
+  inner_join(airports, by = c("dest" = "faa"))
+
+#inciso 4
+
+flights %>%
+  inner_join(weather, by= c("year" , "month", "day", "hour","origin"))
+  
+  
+  
+```
+#Data manipulation 
+#2.1
+```{r}
+
+flights %>%
+  count(year, month, day)%>%
+  filter(n > 1000) %>%
+  arrange(desc(n))
+
+```
+#2.2
+```{r}
+flights
+
+flights_selected <- flights %>%
+  select(year:day, c(hour, origin, dest, tailnum, carrier, arr_delay, dep_delay))
+flights_selected
+
+
+
+
+```
+#2.3
+```{r}
+airlines
+flights_selected
+
+airlines %>%
+  left_join(flights_selected, by = c("carrier"))%>%
+  select(-origin, -dest)%>%
+  mutate(tot_delay = arr_delay + dep_delay)
+
+
+```
+#2.4
+
+```{r}
+
+flights
+weather
+
+precip_delay<- flights %>%
+  inner_join(weather , by = c("year", "month", "day","hour", "origin"))%>%
+  group_by(precip) %>%
+  summarise(delay=mean(dep_delay, na.rm= TRUE))%>%
+  arrange(desc(precip)) #se agrego solo para observar el delay en funcion de precip
+
+```
+#2.5
+```{r}
+
+ggplot(precip_delay, aes(precip,delay))+
+  geom_point()
+
+
+```
+#2.6
+
+```{r}
+
+flights
+airports
+
+
+flights_airports <- flights%>%
+  filter(year == 2013, month == 5, day ==10)%>%
+  group_by(dest) %>%
+  summarise(delay = mean(arr_delay, na.rm=TRUE))%>%
+  inner_join(airports, by=c("dest"="faa"))
+  
+
+
+```
+
+
