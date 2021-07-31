@@ -131,3 +131,12 @@ ggplot(flights_airports, aes(lon,lat))+
   geom_point()
 
 ```
+
+
+#agregando inciso 2.8 desde local
+```{r}
+flights%>%
+  inner_join (planes, by= c("tailnum"), suffix =c("_flights", "_planes"))%>%
+  transmute(tailnum, manufacturer,pi=(dep_delay+arr_delay)/air_time)%>%
+  arrange(desc(pi))#agregando para visualizar descendiente
+```
